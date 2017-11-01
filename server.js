@@ -14,6 +14,13 @@ var schema = buildSchema(`
       name: String!
       appearsIn: [Episode]!
   }
+  input HeroInput {
+      name: String!
+      appearsIn: [Episode]!
+  }
+  type Mutation {
+      createHero(heroInput:HeroInput): Hero
+  }
   enum Episode {
     NEWHOPE
     EMPIRE
@@ -38,12 +45,18 @@ var heroes = [
     new Hero(4, "Darth Vader")
 ]
 
-var root = { 
+var root = {
     hello: () => 'Hello world!',
     hanSolo: () => heroes[0],
     heroes: () => heroes,
     hero: function(args) {
         return heroes.find(x => x.appearsIn.some(e => e== args.episode));
+    },
+    createHero: function ({ heroInput }) {
+        let id = Math.max(...heroes.map(x => x.id)) + 1;
+        let hero = new Hero(id, heroInput.name, heroInput.appearsIn);
+        heroes.push(hero);
+        return hero;
     }
 };
 
