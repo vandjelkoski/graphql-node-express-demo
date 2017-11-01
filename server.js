@@ -5,10 +5,22 @@ var { buildSchema } = require('graphql');
 var schema = buildSchema(`
   type Query {
     hello: String
+    hanSolo: Hero
+  }
+  type Hero {
+      id: ID
+      name: String!
   }
 `);
 
-var root = { hello: () => 'Hello world!' };
+var Hero = function(id, name){
+    this.id = id;
+    this.name = name;
+}
+var root = { 
+    hello: () => 'Hello world!',
+    hanSolo: () => new Hero(1, "Han Solo")    
+};
 
 var app = express();
 app.use('/graphql', graphqlHTTP({
