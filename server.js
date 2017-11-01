@@ -7,28 +7,44 @@ var schema = buildSchema(`
     hello: String
     hanSolo: Hero
     heroes: [Hero]
+    hero(episode: Episode!): Hero
   }
   type Hero {
       id: ID
       name: String!
+      appearsIn: [Episode]!
+  }
+  enum Episode {
+    NEWHOPE
+    EMPIRE
+    JEDI
   }
 `);
 
-var Hero = function(id, name){
+var Hero = function(id, name, episodes = []){
     this.id = id;
     this.name = name;
+    this.appearsIn = episodes ;
 }
+
+const JEDI = "JEDI";
+const EMPIRE = "EMPIRE";
+
+
 var heroes = [
-    new Hero(1, "Han Solo"), 
-    new Hero(2, "Luke Skywalker"), 
-    new Hero(3, "R2-D2"),
+    new Hero(1, "Han Solo", [JEDI,EMPIRE]), 
+    new Hero(2, "Luke Skywalker", [JEDI, EMPIRE]), 
+    new Hero(3, "R2-D2", [EMPIRE]),
     new Hero(4, "Darth Vader")
 ]
 
 var root = { 
     hello: () => 'Hello world!',
     hanSolo: () => heroes[0],
-    heroes: () => heroes  
+    heroes: () => heroes,
+    hero: function(args) {
+        return heroes.find(x => x.appearsIn.some(e => e== args.episode));
+    }
 };
 
 var app = express();
