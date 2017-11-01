@@ -6,6 +6,7 @@ var schema = buildSchema(`
   type Query {
     hello: String
     hanSolo: Hero
+    heroes: [Hero]
   }
   type Hero {
       id: ID
@@ -17,9 +18,17 @@ var Hero = function(id, name){
     this.id = id;
     this.name = name;
 }
+var heroes = [
+    new Hero(1, "Han Solo"), 
+    new Hero(2, "Luke Skywalker"), 
+    new Hero(3, "R2-D2"),
+    new Hero(4, "Darth Vader")
+]
+
 var root = { 
     hello: () => 'Hello world!',
-    hanSolo: () => new Hero(1, "Han Solo")    
+    hanSolo: () => heroes[0],
+    heroes: () => heroes  
 };
 
 var app = express();
